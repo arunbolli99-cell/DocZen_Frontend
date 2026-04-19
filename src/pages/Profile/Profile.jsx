@@ -250,7 +250,7 @@ export default function ProfilePage() {
                                 <div className="profile-avatar-large mx-auto overflow-hidden">
                                     {user.profile_pic ? (
                                         <img 
-                                            src={user.profile_pic.startsWith('http') ? user.profile_pic : `http://localhost:8000${user.profile_pic}`} 
+                                            src={user.profile_pic.startsWith('http') ? user.profile_pic : `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}${user.profile_pic}`} 
                                             alt={user.name} 
                                             className="w-full h-full object-cover"
                                         />

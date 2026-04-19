@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
 const api = axios.create({
-    baseURL: 'http://localhost:8000/api/v1/',
+    baseURL: `${API_BASE_URL}/api/v1/`,
 });
 
 // Interceptor to add the token to requests
@@ -29,7 +31,7 @@ api.interceptors.response.use(
             
             if (user && user.refresh) {
                 try {
-                    const response = await axios.post('http://localhost:8000/api/v1/auth/token/refresh/', {
+                    const response = await axios.post(`${API_BASE_URL}/api/v1/auth/token/refresh/`, {
                         refresh: user.refresh,
                     });
                     
