@@ -1,9 +1,14 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+const VITE_API_URL = import.meta.env.VITE_API_URL;
+
+// Ensure no trailing slash on the base URL to prevent doubling up
+const API_BASE_URL = VITE_API_URL ? VITE_API_URL.replace(/\/$/, '') : '';
+
+console.log('API Base URL:', API_BASE_URL ? `${API_BASE_URL}/api/v1/` : 'MISSING VITE_API_URL');
 
 const api = axios.create({
-    baseURL: `${API_BASE_URL}/api/v1/`,
+    baseURL: API_BASE_URL ? `${API_BASE_URL}/api/v1/` : '/api/v1/',
 });
 
 // Interceptor to add the token to requests
