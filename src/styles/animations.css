@@ -1,0 +1,46 @@
+@layer utilities {
+  .animate-blob {
+    animation: blob 7s infinite;
+  }
+
+  .animation-delay-2000 {
+    animation-delay: 2s;
+  }
+
+  .animation-delay-4000 {
+    animation-delay: 4s;
+  }
+}
+
+@keyframes blob {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+}
+
+/* Page Landing & Shutter Animations */
+.shutter-wipe {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background-color: var(--primary);
+  transform-origin: top;
+  pointer-events: none;
+}
+
+.page-container {
+  width: 100%;
+  height: 100%;
+}

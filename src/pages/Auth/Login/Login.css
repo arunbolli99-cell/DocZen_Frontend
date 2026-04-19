@@ -1,0 +1,97 @@
+.auth-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    background-color: var(--background);
+}
+
+/* ===== Animated Mesh Gradient ===== */
+.auth-mesh-gradient {
+    position: absolute;
+    inset: -50%;
+    width: 200%;
+    height: 200%;
+    background: 
+        radial-gradient(ellipse at 20% 50%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(99, 102, 241, 0.12) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 80%, rgba(56, 189, 248, 0.1) 0%, transparent 50%);
+    animation: auth-mesh-move 12s ease-in-out infinite alternate;
+    pointer-events: none;
+    z-index: 0;
+}
+
+@keyframes auth-mesh-move {
+    0% {
+        transform: translate(0%, 0%) rotate(0deg);
+    }
+    100% {
+        transform: translate(-5%, -5%) rotate(8deg);
+    }
+}
+
+/* ===== Auth Card ===== */
+.auth-card {
+    width: 100%;
+    max-width: 28rem;
+    position: relative;
+    z-index: 10;
+}
+
+.auth-form-wrapper {
+    border-radius: 2.5rem;
+    padding: 3.5rem;
+    position: relative;
+    overflow: hidden;
+    background: transparent !important;
+    backdrop-filter: none;
+    border: 1px solid rgba(255, 255, 255, 0.6) !important; /* Clean, thin visible line */
+    box-shadow: none;
+    padding: 3rem 2.5rem;
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.auth-input-group {
+    margin-bottom: 2.5rem; /* Distinct gap between Email and Password */
+}
+
+.auth-input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 2.75rem;
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1rem;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.auth-input:focus {
+    outline: none;
+    background-color: rgba(255, 255, 255, 0.08);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.15);
+}
+
+.auth-button {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: var(--primary);
+    color: white;
+    border-radius: 1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    margin-top: 2rem; /* Increased gap from password field */
+}
+
+.auth-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px -6px rgba(139, 92, 246, 0.5);
+    filter: brightness(1.1);
+}
