@@ -30,7 +30,6 @@ export default function LoginPage() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { login } = useAuth();
     const navigate = useNavigate();
-    const location = useLocation();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
