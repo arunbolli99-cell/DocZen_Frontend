@@ -10,6 +10,7 @@ import {
     Image as ImageIcon,
     Code,
     PenTool,
+    Mic,
     ArrowRight
 } from "lucide-react";
 
@@ -27,10 +28,10 @@ const TOOLS = [
         description: "Score your resume against industry standards and optimize it for ATS software."
     },
     {
-        name: "URL Shortener",
-        href: "/url-shortener",
-        icon: LinkIcon,
-        description: "Create sleek, memorable, and trackable short links instantly."
+        name: "Voice Studio",
+        href: "/voice-tools",
+        icon: Mic,
+        description: "Convert text to lifelike speech and transcribe audio recordings with high accuracy."
     },
     {
         name: "Document Summarizer",
