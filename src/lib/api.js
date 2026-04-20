@@ -39,7 +39,7 @@ api.interceptors.response.use(
             
             if (user && user.refresh) {
                 try {
-                    const response = await axios.post(`${API_BASE_URL}/api/v1/auth/token/refresh/`, {
+                    const response = await axios.post(`${cleanedBase}/api/v1/auth/token/refresh/`, {
                         refresh: user.refresh,
                     });
                     
