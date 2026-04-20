@@ -33,7 +33,9 @@ api.interceptors.response.use(
     (response) => response,
     async (error) => {
         const originalRequest = error.config;
-        if (error.response && error.response.status === 401 && !originalRequest._retry) {
+        const isLoginRequest = originalRequest.url && originalRequest.url.includes('auth/login/');
+        
+        if (error.response && error.response.status === 401 && !originalRequest._retry && !isLoginRequest) {
             originalRequest._retry = true;
             const user = JSON.parse(localStorage.getItem('doczen_user'));
             
