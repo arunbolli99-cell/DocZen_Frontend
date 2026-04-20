@@ -23,7 +23,8 @@ const itemVariants = {
 };
 
 export default function LoginPage() {
-    const [email, setEmail] = useState("");
+    const location = useLocation();
+    const [email, setEmail] = useState(location.state?.email || "");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);

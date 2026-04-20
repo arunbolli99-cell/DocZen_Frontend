@@ -103,7 +103,12 @@ export const AuthProvider = ({ children }) => {
             }
             
             toast.error(msg);
-            return { success: false, message: msg };
+            return { 
+                success: false, 
+                message: msg, 
+                status: error.response?.status,
+                errors: errorData 
+            };
         }
     };
 

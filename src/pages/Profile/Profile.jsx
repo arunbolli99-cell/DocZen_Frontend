@@ -5,6 +5,7 @@ import { User, Mail, ShieldCheck, Camera, LogOut, Check, Phone, ChevronRight, Tr
 import { useAuth } from "../../context/AuthContext";
 import api from "../../lib/api";
 import toast from "react-hot-toast";
+import { getAvatarSrc } from "../../lib/utils";
 import "./Profile.css";
 
 const containerVariants = {
@@ -50,6 +51,7 @@ export default function ProfilePage() {
     const navigate = useNavigate();
     const fileInputRef = useRef(null);
     const [isEditing, setIsEditing] = useState(false);
+    const [imgError, setImgError] = useState(false);
     const [formData, setFormData] = useState({
         name: user?.name || "",
         email: user?.email || "",
@@ -187,6 +189,7 @@ export default function ProfilePage() {
         formData.append('profile_pic', file);
 
         try {
+            setImgError(false);
             await updateProfile(formData);
             toast.success("Profile picture updated!");
         } catch (error) {
@@ -247,12 +250,13 @@ export default function ProfilePage() {
                                         </button>
                                     </>
                                 )}
-                                <div className="profile-avatar-large mx-auto overflow-hidden">
-                                    {user.profile_pic ? (
+                                <div className="profile-avatar-large mx-auto overflow-hidden bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-4xl font-bold">
+                                    {user.profile_pic && !imgError ? (
                                         <img 
-                                            src={user.profile_pic.startsWith('http') ? user.profile_pic : `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}${user.profile_pic}`} 
+                                            src={getAvatarSrc(user.profile_pic)} 
                                             alt={user.name} 
                                             className="w-full h-full object-cover"
+                                            onError={() => setImgError(true)}
                                         />
                                     ) : (
                                         user.name?.charAt(0).toUpperCase() || "U"

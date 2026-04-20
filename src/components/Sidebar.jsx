@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { cn } from "../lib/utils";
+import { cn, getAvatarSrc } from "../lib/utils";
 import { useAuth } from "../context/AuthContext";
 
 const TOOLS = [
@@ -36,6 +36,7 @@ export default function Sidebar() {
     const location = useLocation();
     const pathname = location.pathname;
     const { user, logout } = useAuth();
+    const [imgError, setImgError] = useState(false);
 
     return (
         <aside className="sidebar">
@@ -86,14 +87,15 @@ export default function Sidebar() {
                             )}
                         >
                             <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-accent flex items-center justify-center text-white font-bold text-xs shadow-lg shadow-primary/20 overflow-hidden">
-                                {user.profile_pic ? (
+                                {user.profile_pic && !imgError ? (
                                     <img 
-                                        src={user.profile_pic.startsWith('http') ? user.profile_pic : `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}${user.profile_pic}`} 
+                                        src={getAvatarSrc(user.profile_pic)} 
                                         alt={user.name} 
                                         className="w-full h-full object-cover"
+                                        onError={() => setImgError(true)}
                                     />
                                 ) : (
-                                    user.name?.charAt(0).toUpperCase()
+                                    user.name?.charAt(0).toUpperCase() || "U"
                                 )}
                             </div>
                             <span className="text-sm font-medium text-white truncate">{user.name}</span>

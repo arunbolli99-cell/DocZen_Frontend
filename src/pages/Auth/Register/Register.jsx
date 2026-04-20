@@ -145,7 +145,15 @@ export default function RegisterPage() {
         const name = `${firstName} ${lastName}`.trim();
         const result = await register(name, email, password, confirmPassword, phone, gender);
         setIsSubmitting(false);
-        if (result.success) navigate("/");
+        
+        if (result.success) {
+            navigate("/");
+        } else if (result.status === 400 && result.message.includes("already registered")) {
+            // Already registered - redirect to login after a short delay
+            setTimeout(() => {
+                navigate("/login", { state: { email: formData.email } });
+            }, 2000);
+        }
     };
 
     return (
