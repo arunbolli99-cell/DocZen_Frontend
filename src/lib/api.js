@@ -2,13 +2,13 @@ import axios from 'axios';
 
 const VITE_API_URL = import.meta.env.VITE_API_URL;
 
-// Ensure no trailing slash on the base URL to prevent doubling up
-const API_BASE_URL = VITE_API_URL ? VITE_API_URL.replace(/\/$/, '') : '';
-
-console.log('API Base URL:', API_BASE_URL ? `${API_BASE_URL}/api/v1/` : 'MISSING VITE_API_URL');
+// Robust Base URL construction
+let cleanedBase = VITE_API_URL ? VITE_API_URL.replace(/\/$/, '') : '';
+// If the user included /api/v1 in their env var, remove it so we don't double up
+cleanedBase = cleanedBase.replace(/\/api\/v1$/, '');
 
 const api = axios.create({
-    baseURL: API_BASE_URL ? `${API_BASE_URL}/api/v1/` : '/api/v1/',
+    baseURL: cleanedBase ? `${cleanedBase}/api/v1/` : '/api/v1/',
 });
 
 console.log('Final API Base URL:', api.defaults.baseURL);
