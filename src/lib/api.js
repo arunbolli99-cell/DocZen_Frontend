@@ -11,9 +11,12 @@ const api = axios.create({
     baseURL: API_BASE_URL ? `${API_BASE_URL}/api/v1/` : '/api/v1/',
 });
 
-// Interceptor to add the token to requests
+console.log('Final API Base URL:', api.defaults.baseURL);
+
+// Interceptor to log requests
 api.interceptors.request.use(
     (config) => {
+        console.log(`🚀 API Request: ${config.method.toUpperCase()} ${config.baseURL}${config.url}`, config.data || '');
         const user = JSON.parse(localStorage.getItem('doczen_user'));
         if (user && user.access) {
             config.headers.Authorization = `Bearer ${user.access}`;
