@@ -145,7 +145,7 @@ export default function VoiceToolsPage() {
                                     <Loader2 className="w-5 h-5 animate-spin" />
                                 ) : (
                                     <span className="flex items-center justify-center gap-2">
-                                        Synthesize Voice <Volume2 className="w-5 h-5" />
+                                        Generate Voice <Volume2 className="w-5 h-5" />
                                     </span>
                                 )}
                             </button>
