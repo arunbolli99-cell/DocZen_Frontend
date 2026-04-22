@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import api from "../lib/api";
+import LoadingScreen from "../components/LoadingScreen";
 
 const AuthContext = createContext();
 
@@ -160,7 +161,7 @@ export const AuthProvider = ({ children }) => {
 
     return (
         <AuthContext.Provider value={{ user, isLoading, login, register, logout, updateProfile, refreshUser }}>
-            {!isLoading && children}
+            {isLoading ? <LoadingScreen /> : children}
         </AuthContext.Provider>
     );
 };

@@ -8,8 +8,36 @@
   <title>DocZen | AI Tools Suite</title>
 </head>
 
-<body>
-  <div id="root"></div>
+  <style>
+    #initial-loader {
+      position: fixed;
+      inset: 0;
+      background: #0b0726;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease;
+    }
+    .pulse {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: #8b5cf6;
+      animation: pulse 2s infinite ease-in-out;
+    }
+    @keyframes pulse {
+      0% { transform: scale(0.9); opacity: 0.7; }
+      50% { transform: scale(1); opacity: 0.3; }
+      100% { transform: scale(0.9); opacity: 0.7; }
+    }
+  </style>
+  <div id="root">
+    <div id="initial-loader">
+      <div class="pulse"></div>
+    </div>
+  </div>
   <script type="module" src="/src/main.jsx"></script>
 </body>
 </html>
