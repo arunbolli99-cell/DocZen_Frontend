@@ -39,6 +39,8 @@ const VOICES = [
     { id: "en-IN-NeerjaNeural", name: "Neerja (Female, India)", lang: "English" },
     { id: "hi-IN-SwaraNeural", name: "Swara (Female, Hindi)", lang: "Hindi" },
     { id: "hi-IN-MadhurNeural", name: "Madhur (Male, Hindi)", lang: "Hindi" },
+    { id: "te-IN-ShrutiNeural", name: "Shruti (Female, Telugu)", lang: "Telugu" },
+    { id: "te-IN-MohanNeural", name: "Mohan (Male, Telugu)", lang: "Telugu" },
 ];
 
 export default function VoiceToolsPage() {
