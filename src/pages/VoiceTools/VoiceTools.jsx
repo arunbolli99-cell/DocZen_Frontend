@@ -32,15 +32,13 @@ const itemVariants = {
 };
 
 const VOICES = [
-    { id: "en-US-AriaNeural", name: "Aria (Female, US)", lang: "English" },
-    { id: "en-US-GuyNeural", name: "Guy (Male, US)", lang: "English" },
-    { id: "en-GB-SoniaNeural", name: "Sonia (Female, UK)", lang: "English" },
-    { id: "en-GB-RyanNeural", name: "Ryan (Male, UK)", lang: "English" },
-    { id: "en-IN-NeerjaNeural", name: "Neerja (Female, India)", lang: "English" },
-    { id: "hi-IN-SwaraNeural", name: "Swara (Female, Hindi)", lang: "Hindi" },
-    { id: "hi-IN-MadhurNeural", name: "Madhur (Male, Hindi)", lang: "Hindi" },
-    { id: "te-IN-ShrutiNeural", name: "Shruti (Female, Telugu)", lang: "Telugu" },
-    { id: "te-IN-MohanNeural", name: "Mohan (Male, Telugu)", lang: "Telugu" },
+    { id: "en-us", name: "English (US)", lang: "English" },
+    { id: "en-uk", name: "English (UK)", lang: "English" },
+    { id: "en-in", name: "English (India)", lang: "English" },
+    { id: "hi-in", name: "Hindi (India)", lang: "Hindi" },
+    { id: "te-in", name: "Telugu (India)", lang: "Telugu" },
+    { id: "fr-fr", name: "French (France)", lang: "French" },
+    { id: "es-es", name: "Spanish (Spain)", lang: "Spanish" },
 ];
 
 export default function VoiceToolsPage() {
@@ -50,7 +48,7 @@ export default function VoiceToolsPage() {
 
     // TTS state
     const [ttsText, setTtsText] = useState("");
-    const [selectedVoice, setSelectedVoice] = useState("en-US-AriaNeural");
+    const [selectedVoice, setSelectedVoice] = useState("en-us");
     const [generatedAudio, setGeneratedAudio] = useState(null);
 
     const handleTtsGenerate = async () => {
