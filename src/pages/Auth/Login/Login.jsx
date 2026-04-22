@@ -110,86 +110,70 @@ export default function LoginPage() {
 
                     <div className="auth-header">
                         <h1 className="text-2xl font-bold text-white mb-2 flex gap-x-2 justify-center">
-                            {"Welcome Back".split(" ").map((word, i) => (
-                                <motion.span
-                                    key={i}
-                                    initial={{ opacity: 0, x: -10, filter: "blur(8px)" }}
-                                    animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-                                    transition={{ duration: 0.6, delay: 0.4 + (i * 0.1), ease: "easeOut" }}
-                                >
-                                    {word}
-                                </motion.span>
-                            ))}
+                            {otpSent ? "Verify Identity" : "Welcome Back"}
                         </h1>
-                        <p className="text-muted-foreground text-sm">Sign in to continue to your AI tools suite</p>
+                        <p className="text-muted-foreground text-sm">
+                            {otpSent ? `Enter the 6-digit code sent to ${email}` : "Sign in to continue to your AI tools suite"}
+                        </p>
                     </div>
 
                     <form onSubmit={handleSubmit}>
-                        <div className="auth-input-group">
-                            <label className={`text-sm font-medium pl-1 ${otpSent ? 'text-white/40' : 'text-white/80'}`}>Email Address</label>
-                            <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                    <Mail className={`h-5 w-5 ${otpSent ? 'text-white/20' : 'text-muted-foreground'}`} />
+                        {!otpSent ? (
+                            <>
+                                <div className="auth-input-group">
+                                    <label className="text-sm font-medium pl-1 text-white/80">Email Address</label>
+                                    <div className="relative">
+                                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                            <Mail className="h-5 w-5 text-muted-foreground" />
+                                        </div>
+                                        <input
+                                            type="email"
+                                            required
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
+                                            className="auth-input"
+                                            placeholder="you@example.com"
+                                        />
+                                    </div>
                                 </div>
-                                <input
-                                    type="email"
-                                    required
-                                    disabled={otpSent}
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    className={`auth-input ${otpSent ? 'auth-input-disabled' : ''}`}
-                                    placeholder="you@example.com"
-                                />
-                            </div>
-                        </div>
 
-                        <div className="auth-input-group">
-                            <label className={`text-sm font-medium pl-1 ${otpSent ? 'text-white/40' : 'text-white/80'}`}>Password</label>
-                            <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                    <Lock className={`h-5 w-5 ${otpSent ? 'text-white/20' : 'text-muted-foreground'}`} />
+                                <div className="auth-input-group">
+                                    <label className="text-sm font-medium pl-1 text-white/80">Password</label>
+                                    <div className="relative">
+                                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                            <Lock className="h-5 w-5 text-muted-foreground" />
+                                        </div>
+                                        <input
+                                            type={showPassword ? "text" : "password"}
+                                            required
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
+                                            className="auth-input pr-12"
+                                            placeholder="••••••••"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            className="absolute inset-y-0 right-0 pr-4 flex items-center text-muted-foreground hover:text-primary transition-colors h-full"
+                                        >
+                                            {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                                        </button>
+                                    </div>
                                 </div>
-                                <input
-                                    type={showPassword ? "text" : "password"}
-                                    required
-                                    disabled={otpSent}
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    className={`auth-input pr-12 ${otpSent ? 'auth-input-disabled' : ''}`}
-                                    placeholder="••••••••"
-                                />
-                                {!otpSent && (
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute inset-y-0 right-0 pr-4 flex items-center text-muted-foreground hover:text-primary transition-colors h-full"
-                                    >
-                                        {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                                    </button>
-                                )}
-                            </div>
-                        </div>
-
-                        {otpSent && (
+                            </>
+                        ) : (
                             <motion.div 
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                className="auth-input-group mt-6"
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                className="auth-input-group mt-2"
                             >
-                                <label className="text-sm font-medium text-primary pl-1 mb-3 flex items-center justify-between">
-                                    <span className="flex items-center gap-2">
-                                        <ShieldCheck className="w-4 h-4" /> Verification Code
-                                    </span>
-                                    <button type="button" onClick={() => setOtpSent(false)} className="text-[10px] text-muted-foreground hover:text-white underline">Edit info</button>
-                                </label>
-                                
-                                <div className="flex justify-between gap-2 otp-box-container" onPaste={handlePaste}>
+                                <div className="flex justify-between gap-2 otp-box-container mb-6" onPaste={handlePaste}>
                                     {otp.map((data, index) => (
                                         <input
                                             key={index}
                                             type="text"
                                             maxLength="1"
-                                            className="otp-input-box"
+                                            className="otp-input-box small-otp"
                                             value={data}
                                             autoFocus={index === 0}
                                             onChange={(e) => handleOtpChange(e.target, index)}
@@ -197,9 +181,15 @@ export default function LoginPage() {
                                         />
                                     ))}
                                 </div>
-                                <p className="text-[10px] text-primary/80 mt-3 text-center animate-pulse">
-                                    Code sent to your Gmail
-                                </p>
+                                <div className="text-center">
+                                    <button 
+                                        type="button" 
+                                        onClick={() => setOtpSent(false)} 
+                                        className="text-xs text-muted-foreground hover:text-primary transition-colors underline"
+                                    >
+                                        Wrong email or password? Edit info
+                                    </button>
+                                </div>
                             </motion.div>
                         )}
 

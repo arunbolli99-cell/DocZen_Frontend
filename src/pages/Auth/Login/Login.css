@@ -123,6 +123,13 @@
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.small-otp {
+    width: 2.8rem;
+    height: 3.2rem;
+    font-size: 1.2rem;
+    border-radius: 0.75rem;
+}
+
 .otp-input-box:focus {
     outline: none;
     border-color: var(--primary);
