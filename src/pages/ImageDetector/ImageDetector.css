@@ -52,3 +52,17 @@
     border-color: var(--primary);
     box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
 }
+
+@media (max-width: 768px) {
+    .image-tools-container {
+        padding: 1rem;
+    }
+
+    .image-input-card {
+        padding: 1.5rem;
+    }
+
+    .image-style-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

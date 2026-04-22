@@ -53,3 +53,19 @@
 .text-tool-copy:hover {
     color: var(--primary);
 }
+
+@media (max-width: 1024px) {
+    .text-tools-container {
+        padding: 1rem;
+    }
+
+    .text-tool-card {
+        padding: 1.5rem;
+    }
+
+    /* Stack grid columns if using grid in JSX */
+    .grid {
+        grid-template-columns: 1fr !important;
+        gap: 2rem !important;
+    }
+}

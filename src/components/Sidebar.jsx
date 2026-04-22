@@ -14,7 +14,8 @@ import {
     LogOut,
     UserCircle,
     Headphones,
-    Mic
+    Mic,
+    X
 } from "lucide-react";
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -33,14 +34,14 @@ const TOOLS = [
     { name: "Grammar Checker", href: "/grammar-checker", icon: PenTool },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ isOpen, onClose }) {
     const location = useLocation();
     const pathname = location.pathname;
     const { user, logout } = useAuth();
     const [imgError, setImgError] = useState(false);
 
     return (
-        <aside className="sidebar">
+        <aside className={cn("sidebar", isOpen ? "sidebar-open" : "")}>
             <div className="sidebar-logo-container">
                 <Link to="/" className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/25">
@@ -50,6 +51,12 @@ export default function Sidebar() {
                         Doc<span className="text-primary">Zen</span>
                     </span>
                 </Link>
+                <button 
+                    onClick={onClose}
+                    className="mobile-sidebar-close p-2 rounded-lg hover:bg-white/5 text-muted-foreground transition-colors"
+                >
+                    <X className="w-6 h-6" />
+                </button>
             </div>
 
             <div className="sidebar-nav">
@@ -68,6 +75,7 @@ export default function Sidebar() {
                                     "nav-link",
                                     isActive ? "nav-link-active" : ""
                                 )}
+                                onClick={onClose}
                             >
                                 <tool.icon className={cn("w-5 h-5 transition-colors", isActive ? "text-white" : "text-muted-foreground group-hover:text-white")} />
                                 {tool.name}
@@ -86,6 +94,7 @@ export default function Sidebar() {
                                 "profile-link-compact",
                                 pathname === "/profile" ? "nav-link-active" : ""
                             )}
+                            onClick={onClose}
                         >
                             <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-accent flex items-center justify-center text-white font-bold text-xs shadow-lg shadow-primary/20 overflow-hidden">
                                 {user.profile_pic && !imgError ? (
@@ -102,7 +111,10 @@ export default function Sidebar() {
                             <span className="text-sm font-medium text-white truncate">{user.name}</span>
                         </Link>
                         <button
-                            onClick={logout}
+                            onClick={() => {
+                                logout();
+                                onClose();
+                            }}
                             className="p-2 rounded-lg hover:bg-white/5 text-muted-foreground hover:text-white transition-colors"
                             title="Logout"
                         >
@@ -113,6 +125,7 @@ export default function Sidebar() {
                     <Link
                         to="/login"
                         className="flex items-center justify-center gap-2 py-3 rounded-xl bg-primary text-sm font-semibold text-white hover:bg-primary/90 transition-all shadow-lg shadow-primary/20"
+                        onClick={onClose}
                     >
                         Login to Account
                     </Link>

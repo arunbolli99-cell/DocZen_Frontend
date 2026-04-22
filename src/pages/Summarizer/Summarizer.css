@@ -54,3 +54,17 @@
 .text-tool-copy:hover {
     color: var(--primary);
 }
+
+@media (max-width: 768px) {
+    .text-tools-container {
+        padding: 1rem;
+    }
+
+    .text-tool-card {
+        padding: 1.5rem;
+    }
+
+    .text-tool-input {
+        min-height: 150px;
+    }
+}

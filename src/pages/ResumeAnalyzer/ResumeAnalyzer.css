@@ -98,3 +98,17 @@
     transform: translateY(-2px);
     box-shadow: 0 8px 20px -6px rgba(139, 92, 246, 0.5);
 }
+
+@media (max-width: 768px) {
+    .resume-container {
+        padding: 1rem;
+    }
+
+    .tool-card-main, .resume-result-card {
+        padding: 1.5rem;
+    }
+
+    .resume-upload-zone {
+        padding: 2rem 1rem;
+    }
+}

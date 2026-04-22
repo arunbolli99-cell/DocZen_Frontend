@@ -212,3 +212,34 @@ audio {
     border-color: var(--primary);
     background: rgba(255, 255, 255, 0.04);
 }
+
+@media (max-width: 768px) {
+    .voice-tools-container {
+        padding: 1rem;
+    }
+
+    .voice-tools-card {
+        padding: 1.5rem;
+        border-radius: 1.5rem;
+    }
+
+    .tabs-header {
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 0.5rem;
+    }
+
+    .tab-button {
+        padding: 0.75rem;
+        font-size: 0.875rem;
+    }
+
+    .mic-button {
+        width: 64px;
+        height: 64px;
+    }
+
+    .record-visualizer {
+        height: 100px;
+    }
+}

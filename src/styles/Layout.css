@@ -14,12 +14,59 @@
     height: 100vh;
     overflow: hidden;
     position: relative;
+    width: 100%;
+}
+
+/* Mobile Header Styles */
+.mobile-header {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4.5rem;
+    padding: 0 1.25rem;
+    background: rgba(3, 0, 20, 0.8);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    z-index: 30;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.mobile-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 35;
+    display: none;
 }
 
 .scroll-container {
     width: 100%;
     flex: 1;
     overflow-y: auto;
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+@media (max-width: 1024px) {
+    .layout-container {
+        flex-direction: column;
+    }
+
+    .mobile-header {
+        display: flex;
+    }
+
+    .mobile-overlay {
+        display: block;
+    }
+
+    .main-content {
+        margin-top: 4.5rem;
+        height: calc(100vh - 4.5rem);
+    }
 }
 
 /* Firefox scrollbar */

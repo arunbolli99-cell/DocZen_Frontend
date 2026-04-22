@@ -80,6 +80,16 @@
     }
 }
 
+/* Extra mobile refinements */
+@media (max-width: 480px) {
+    .dashboard-container {
+        padding: 1rem;
+    }
+    .tool-card {
+        padding: 1.25rem;
+    }
+}
+
 .tool-card {
     border-radius: 1.5rem;
     padding: 1.5rem;

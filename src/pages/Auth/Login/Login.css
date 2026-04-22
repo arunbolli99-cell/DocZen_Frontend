@@ -141,3 +141,19 @@
 .otp-input-box::selection {
     background: transparent;
 }
+
+@media (max-width: 480px) {
+    .auth-form-wrapper {
+        padding: 2rem 1.5rem;
+    }
+
+    .otp-input-box {
+        width: 2.75rem;
+        height: 3.5rem;
+        font-size: 1.25rem;
+    }
+
+    .auth-header h2 {
+        font-size: 1.5rem;
+    }
+}
