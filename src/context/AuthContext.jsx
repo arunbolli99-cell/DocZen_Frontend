@@ -159,9 +159,9 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const sendOTP = async (email) => {
+    const sendOTP = async (email, password) => {
         try {
-            const response = await api.post("auth/send-otp/", { email });
+            const response = await api.post("auth/send-otp/", { email, password });
             toast.success(response.data.message || "OTP sent successfully!");
             return { success: true };
         } catch (error) {

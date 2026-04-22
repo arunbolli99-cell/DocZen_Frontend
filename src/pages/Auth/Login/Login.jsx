@@ -27,43 +27,33 @@ export default function LoginPage() {
     const [email, setEmail] = useState(location.state?.email || "");
     const [password, setPassword] = useState("");
     const [otp, setOtp] = useState("");
-    const [loginMode, setLoginMode] = useState("password"); // 'password' or 'otp'
     const [otpSent, setOtpSent] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [isSendingOtp, setIsSendingOtp] = useState(false);
     
-    const { login, sendOTP, verifyOTP } = useAuth();
+    const { sendOTP, verifyOTP } = useAuth();
     const navigate = useNavigate();
-
-    const handleSendOTP = async () => {
-        if (!email) {
-            return;
-        }
-        setIsSendingOtp(true);
-        const result = await sendOTP(email);
-        setIsSendingOtp(false);
-        if (result.success) {
-            setOtpSent(true);
-        }
-    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
         
-        let result;
-        if (loginMode === "password") {
-            result = await login(email, password);
+        if (!otpSent) {
+            // Step 1: Verify Password & Send OTP
+            const result = await sendOTP(email, password);
+            if (result.success) {
+                setOtpSent(true);
+            }
         } else {
-            result = await verifyOTP(email, otp);
+            // Step 2: Verify OTP & Login
+            const result = await verifyOTP(email, otp);
+            if (result.success) {
+                const from = location.state?.from?.pathname || "/";
+                navigate(from, { replace: true });
+            }
         }
         
         setIsSubmitting(false);
-        if (result.success) {
-            const from = location.state?.from?.pathname || "/";
-            navigate(from, { replace: true });
-        }
     };
 
     return (
@@ -116,22 +106,6 @@ export default function LoginPage() {
                         <p className="text-muted-foreground text-sm">Sign in to continue to your AI tools suite</p>
                     </div>
 
-                    {/* Login Mode Toggle */}
-                    <div className="flex bg-white/5 p-1 rounded-lg mb-6">
-                        <button 
-                            onClick={() => setLoginMode("password")}
-                            className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${loginMode === 'password' ? 'bg-primary text-white shadow-lg' : 'text-white/60 hover:text-white'}`}
-                        >
-                            Password
-                        </button>
-                        <button 
-                            onClick={() => setLoginMode("otp")}
-                            className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${loginMode === 'otp' ? 'bg-primary text-white shadow-lg' : 'text-white/60 hover:text-white'}`}
-                        >
-                            Email OTP
-                        </button>
-                    </div>
-
                     <form onSubmit={handleSubmit}>
                         <div className="auth-input-group">
                             <label className="text-sm font-medium text-white/80 pl-1">Email Address</label>
@@ -142,29 +116,31 @@ export default function LoginPage() {
                                 <input
                                     type="email"
                                     required
+                                    disabled={otpSent}
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="auth-input"
+                                    className={`auth-input ${otpSent ? 'opacity-50' : ''}`}
                                     placeholder="you@example.com"
                                 />
                             </div>
                         </div>
 
-                        {loginMode === "password" ? (
-                            <div className="auth-input-group">
-                                <label className="text-sm font-medium text-white/80 pl-1">Password</label>
-                                <div className="relative">
-                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                        <Lock className="h-5 w-5 text-muted-foreground" />
-                                    </div>
-                                    <input
-                                        type={showPassword ? "text" : "password"}
-                                        required
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                        className="auth-input pr-12"
-                                        placeholder="••••••••"
-                                    />
+                        <div className="auth-input-group">
+                            <label className="text-sm font-medium text-white/80 pl-1">Password</label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <Lock className="h-5 w-5 text-muted-foreground" />
+                                </div>
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    required
+                                    disabled={otpSent}
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    className={`auth-input pr-12 ${otpSent ? 'opacity-50' : ''}`}
+                                    placeholder="••••••••"
+                                />
+                                {!otpSent && (
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword(!showPassword)}
@@ -172,53 +148,50 @@ export default function LoginPage() {
                                     >
                                         {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                                     </button>
-                                </div>
-                            </div>
-                        ) : (
-                            <div className="auth-input-group">
-                                <label className="text-sm font-medium text-white/80 pl-1">Verification Code</label>
-                                <div className="flex gap-2">
-                                    <div className="relative flex-1">
-                                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                            <ShieldCheck className="h-5 w-5 text-muted-foreground" />
-                                        </div>
-                                        <input
-                                            type="text"
-                                            required={otpSent}
-                                            value={otp}
-                                            onChange={(e) => setOtp(e.target.value)}
-                                            className="auth-input"
-                                            placeholder="6-digit code"
-                                            maxLength={6}
-                                        />
-                                    </div>
-                                    <button
-                                        type="button"
-                                        onClick={handleSendOTP}
-                                        disabled={isSendingOtp || !email}
-                                        className="px-4 bg-white/10 hover:bg-white/20 text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
-                                    >
-                                        {isSendingOtp ? <Loader2 className="w-4 h-4 animate-spin" /> : otpSent ? "Resend" : "Send Code"}
-                                    </button>
-                                </div>
-                                {otpSent && (
-                                    <p className="text-xs text-primary mt-2 pl-1 animate-pulse">
-                                        Code sent to your Gmail inbox!
-                                    </p>
                                 )}
                             </div>
+                        </div>
+
+                        {otpSent && (
+                            <motion.div 
+                                initial={{ opacity: 0, y: -10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="auth-input-group mt-4"
+                            >
+                                <label className="text-sm font-medium text-primary pl-1 flex items-center gap-2">
+                                    <ShieldCheck className="w-4 h-4" /> Enter Verification Code
+                                </label>
+                                <div className="relative">
+                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                        <Mail className="h-5 w-5 text-primary" />
+                                    </div>
+                                    <input
+                                        type="text"
+                                        required
+                                        autoFocus
+                                        value={otp}
+                                        onChange={(e) => setOtp(e.target.value)}
+                                        className="auth-input border-primary/50 focus:border-primary shadow-[0_0_15px_rgba(45,63,227,0.1)]"
+                                        placeholder="6-digit code from Gmail"
+                                        maxLength={6}
+                                    />
+                                </div>
+                                <p className="text-[10px] text-muted-foreground mt-2 text-center">
+                                    Wrong email or password? <button type="button" onClick={() => setOtpSent(false)} className="text-primary hover:underline">Go back</button>
+                                </p>
+                            </motion.div>
                         )}
 
                         <button
                             type="submit"
-                            disabled={isSubmitting || (loginMode === 'otp' && !otpSent)}
-                            className="auth-button flex items-center justify-center gap-2 mt-2"
+                            disabled={isSubmitting}
+                            className="auth-button flex items-center justify-center gap-2 mt-6"
                         >
                             {isSubmitting ? (
                                 <Loader2 className="w-5 h-5 animate-spin" />
                             ) : (
                                 <>
-                                    {loginMode === 'password' ? 'Sign In' : 'Verify & Login'} <ArrowRight className="w-5 h-5" />
+                                    {otpSent ? 'Verify & Sign In' : 'Sign In with OTP'} <ArrowRight className="w-5 h-5" />
                                 </>
                             )}
                         </button>
