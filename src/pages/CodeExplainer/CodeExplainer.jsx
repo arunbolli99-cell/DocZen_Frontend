@@ -5,6 +5,7 @@ import { useLocation } from "react-router-dom";
 import api from "../../lib/api";
 import { useAuth } from "../../context/AuthContext";
 import toast from "react-hot-toast";
+import { useToolAccess } from "../../hooks/useToolAccess";
 import "./CodeExplainer.css";
 
 const containerVariants = {
@@ -34,7 +35,8 @@ export default function CodeExplainerPage() {
             return null;
         }
     });
-    const { refreshUser } = useAuth();
+    const { user, refreshUser } = useAuth();
+    const { checkAccess } = useToolAccess();
     const location = useLocation();
 
     useEffect(() => {
@@ -54,6 +56,7 @@ export default function CodeExplainerPage() {
     }, [code, result]);
 
     const fetchSpecificHistory = async (id) => {
+        if (!user) return;
         try {
             const response = await api.get(`tools/text/history/detail/${id}/`);
             if (response.data) {
@@ -71,6 +74,7 @@ export default function CodeExplainerPage() {
 
     const handleExplain = async (e) => {
         e?.preventDefault();
+        if (!checkAccess()) return;
         if (!code.trim()) {
             toast.error("Please paste some code to explain.");
             return;

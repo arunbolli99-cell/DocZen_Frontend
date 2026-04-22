@@ -6,6 +6,7 @@ import api from "../../lib/api";
 import toast from "react-hot-toast";
 import { useAuth } from "../../context/AuthContext";
 import { cn } from "../../lib/utils";
+import { useToolAccess } from "../../hooks/useToolAccess";
 import "./ResumeAnalyzer.css";
 
 const CircularProgress = ({ score }) => {
@@ -77,7 +78,8 @@ export default function ResumeAnalyzerPage() {
             return null;
         }
     });
-    const { refreshUser } = useAuth();
+    const { user, refreshUser } = useAuth();
+    const { checkAccess } = useToolAccess();
     const fileInputRef = useRef(null);
     const location = useLocation();
 
@@ -98,6 +100,7 @@ export default function ResumeAnalyzerPage() {
     }, [jobDescription, result]);
 
     const fetchSpecificHistory = async (id) => {
+        if (!user) return;
         try {
             const response = await api.get(`tools/resume/history/${id}/`);
             if (response.data) {
@@ -137,6 +140,7 @@ export default function ResumeAnalyzerPage() {
     };
 
     const handleAnalyze = async () => {
+        if (!checkAccess()) return;
         if (!file) {
             toast.error("Please provide a resume file.");
             return;

@@ -110,20 +110,12 @@ export default function Sidebar() {
                         </button>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-2 gap-2">
-                        <Link
-                            to="/login"
-                            className="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm font-medium text-white hover:bg-white/10 transition-all"
-                        >
-                            Login
-                        </Link>
-                        <Link
-                            to="/register"
-                            className="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-primary text-sm font-medium text-white hover:bg-primary/90 transition-all shadow-lg shadow-primary/20"
-                        >
-                            Sign Up
-                        </Link>
-                    </div>
+                    <Link
+                        to="/login"
+                        className="flex items-center justify-center gap-2 py-3 rounded-xl bg-primary text-sm font-semibold text-white hover:bg-primary/90 transition-all shadow-lg shadow-primary/20"
+                    >
+                        Login to Account
+                    </Link>
                 )}
             </div>
         </aside>

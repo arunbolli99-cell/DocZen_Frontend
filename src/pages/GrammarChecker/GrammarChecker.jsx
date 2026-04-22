@@ -6,6 +6,7 @@ import api from "../../lib/api";
 import { useAuth } from "../../context/AuthContext";
 import toast from "react-hot-toast";
 import { cn } from "../../lib/utils";
+import { useToolAccess } from "../../hooks/useToolAccess";
 import "./GrammarChecker.css";
 
 const containerVariants = {
@@ -37,7 +38,8 @@ export default function GrammarCheckerPage() {
     });
     const [viewMode, setViewMode] = useState("diff"); // "diff" or "final"
     const [copied, setCopied] = useState(false);
-    const { refreshUser } = useAuth();
+    const { user, refreshUser } = useAuth();
+    const { checkAccess } = useToolAccess();
     const location = useLocation();
 
     useEffect(() => {
@@ -57,6 +59,7 @@ export default function GrammarCheckerPage() {
     }, [text, result]);
 
     const fetchSpecificHistory = async (id) => {
+        if (!user) return;
         try {
             const response = await api.get(`tools/text/history/detail/${id}/`);
             if (response.data) {
@@ -71,6 +74,7 @@ export default function GrammarCheckerPage() {
     };
 
     const handleCheck = async () => {
+        if (!checkAccess()) return;
         if (!text.trim()) return;
         setIsLoading(true);
         setResult(null);

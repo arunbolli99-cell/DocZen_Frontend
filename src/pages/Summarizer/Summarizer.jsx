@@ -5,6 +5,7 @@ import { useLocation } from "react-router-dom";
 import api from "../../lib/api";
 import { useAuth } from "../../context/AuthContext";
 import toast from "react-hot-toast";
+import { useToolAccess } from "../../hooks/useToolAccess";
 import "./Summarizer.css";
 
 const containerVariants = {
@@ -37,7 +38,8 @@ export default function SummarizerPage() {
             return null;
         }
     });
-    const { refreshUser } = useAuth();
+    const { user, refreshUser } = useAuth();
+    const { checkAccess } = useToolAccess();
     const location = useLocation();
 
     useEffect(() => {
@@ -57,6 +59,7 @@ export default function SummarizerPage() {
     }, [inputText, result]);
 
     const fetchSpecificHistory = async (id) => {
+        if (!user) return;
         try {
             const response = await api.get(`tools/text/history/detail/${id}/`);
             if (response.data) {
@@ -83,6 +86,7 @@ export default function SummarizerPage() {
     };
 
     const handleSummarize = async () => {
+        if (!checkAccess()) return;
         if (activeTab === "text" && !inputText.trim()) {
             toast.error("Please enter some text to summarize.");
             return;

@@ -5,6 +5,7 @@ import { useLocation } from "react-router-dom";
 import api from "../../lib/api";
 import { useAuth } from "../../context/AuthContext";
 import toast from "react-hot-toast";
+import { useToolAccess } from "../../hooks/useToolAccess";
 import "./ImageDetector.css";
 
 const containerVariants = {
@@ -36,7 +37,8 @@ export default function ImageDetectorPage() {
             return null;
         }
     });
-    const { refreshUser } = useAuth();
+    const { user, refreshUser } = useAuth();
+    const { checkAccess } = useToolAccess();
     const fileInputRef = useRef(null);
     const location = useLocation();
 
@@ -57,6 +59,7 @@ export default function ImageDetectorPage() {
     }, [preview, result]);
 
     const fetchSpecificHistory = async (id) => {
+        if (!user) return;
         try {
             const response = await api.get(`tools/image/history/detail/${id}/`);
             if (response.data) {
@@ -112,6 +115,7 @@ export default function ImageDetectorPage() {
     };
 
     const handleAnalyze = async () => {
+        if (!checkAccess()) return;
         if (!file) {
             toast.error("Please provide an image to analyze.");
             return;

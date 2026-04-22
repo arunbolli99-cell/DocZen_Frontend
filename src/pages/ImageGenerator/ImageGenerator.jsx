@@ -6,6 +6,7 @@ import api from "../../lib/api";
 import { useAuth } from "../../context/AuthContext";
 import toast from "react-hot-toast";
 import { cn } from "../../lib/utils";
+import { useToolAccess } from "../../hooks/useToolAccess";
 import "./ImageGenerator.css";
 
 const STYLES = [
@@ -39,7 +40,8 @@ export default function ImageGeneratorPage() {
     const [isGenerating, setIsGenerating] = useState(false);
     const [isImageLoading, setIsImageLoading] = useState(false);
     const [generatedImage, setGeneratedImage] = useState(null); 
-    const { refreshUser } = useAuth();
+    const { user, refreshUser } = useAuth();
+    const { checkAccess } = useToolAccess();
     const location = useLocation();
 
     useEffect(() => {
@@ -59,6 +61,7 @@ export default function ImageGeneratorPage() {
     }, [prompt, style, generatedImage]);
 
     const fetchSpecificHistory = async (id) => {
+        if (!user) return;
         try {
             const response = await api.get(`tools/image/history/detail/${id}/`);
             if (response.data) {
@@ -74,6 +77,7 @@ export default function ImageGeneratorPage() {
 
     const handleGenerate = async (e) => {
         e?.preventDefault();
+        if (!checkAccess()) return;
         if (!prompt.trim()) {
             toast.error("Please enter a prompt to generate an image.");
             return;
@@ -112,6 +116,7 @@ export default function ImageGeneratorPage() {
         localStorage.removeItem("doczen_image_result");
     };
     const downloadImage = async () => {
+        if (!checkAccess()) return;
         if (!generatedImage) return;
         
         try {

@@ -6,6 +6,7 @@ import { useAuth } from "../../context/AuthContext";
 import toast from "react-hot-toast";
 import { cn } from "../../lib/utils";
 import Typewriter from "../../components/Typewriter";
+import { useToolAccess } from "../../hooks/useToolAccess";
 import "./Chat.css";
 
 const containerVariants = {
@@ -28,7 +29,8 @@ export default function ChatPage() {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState(() => localStorage.getItem("doczen_chat_input") || "");
     const [isTyping, setIsTyping] = useState(false);
-    const { refreshUser } = useAuth();
+    const { user, refreshUser } = useAuth();
+    const { checkAccess } = useToolAccess();
     const messagesEndRef = useRef(null);
     const abortControllerRef = useRef(null);
 
@@ -38,6 +40,7 @@ export default function ChatPage() {
 
     useEffect(() => {
         const fetchHistory = async () => {
+            if (!user) return;
             try {
                 const response = await api.get("tools/ai-chat/history/");
                 if (response.data?.success) {
@@ -62,6 +65,7 @@ export default function ChatPage() {
 
     const handleSend = async (e) => {
         e?.preventDefault();
+        if (!checkAccess()) return;
         if (!input.trim()) return;
 
         const userMessage = {
@@ -133,6 +137,7 @@ export default function ChatPage() {
     };
 
     const handleClear = async () => {
+        if (!checkAccess()) return;
         try {
             const response = await api.delete("tools/ai-chat/history/");
             if (response.data?.success) {

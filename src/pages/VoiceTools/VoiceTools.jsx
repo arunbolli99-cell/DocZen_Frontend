@@ -12,6 +12,7 @@ import {
 import api from "../../lib/api";
 import { useAuth } from "../../context/AuthContext";
 import toast from "react-hot-toast";
+import { useToolAccess } from "../../hooks/useToolAccess";
 import "./VoiceTools.css";
 
 const containerVariants = {
@@ -43,6 +44,7 @@ const VOICES = [
 export default function VoiceToolsPage() {
     const [isLoading, setIsLoading] = useState(false);
     const { refreshUser } = useAuth();
+    const { checkAccess } = useToolAccess();
 
     // TTS state
     const [ttsText, setTtsText] = useState("");
@@ -50,6 +52,7 @@ export default function VoiceToolsPage() {
     const [generatedAudio, setGeneratedAudio] = useState(null);
 
     const handleTtsGenerate = async () => {
+        if (!checkAccess()) return;
         if (!ttsText.trim()) return;
         setIsLoading(true);
         setGeneratedAudio(null);
