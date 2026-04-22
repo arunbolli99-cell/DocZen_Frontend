@@ -26,7 +26,7 @@ export default function LoginPage() {
     const location = useLocation();
     const [email, setEmail] = useState(location.state?.email || "");
     const [password, setPassword] = useState("");
-    const [otp, setOtp] = useState("");
+    const [otp, setOtp] = useState(["", "", "", "", "", ""]);
     const [otpSent, setOtpSent] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -34,19 +34,46 @@ export default function LoginPage() {
     const { sendOTP, verifyOTP } = useAuth();
     const navigate = useNavigate();
 
+    // Handle OTP box changes
+    const handleOtpChange = (element, index) => {
+        if (isNaN(element.value)) return false;
+
+        setOtp([...otp.map((d, idx) => (idx === index ? element.value : d))]);
+
+        // Focus next input
+        if (element.nextSibling && element.value) {
+            element.nextSibling.focus();
+        }
+    };
+
+    const handleKeyDown = (e, index) => {
+        if (e.key === "Backspace" && !otp[index] && e.target.previousSibling) {
+            e.target.previousSibling.focus();
+        }
+    };
+
+    const handlePaste = (e) => {
+        const data = e.clipboardData.getData("text").slice(0, 6);
+        if (/^\d+$/.test(data)) {
+            const newOtp = [...otp];
+            data.split("").forEach((char, idx) => {
+                newOtp[idx] = char;
+            });
+            setOtp(newOtp);
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
         
         if (!otpSent) {
-            // Step 1: Verify Password & Send OTP
             const result = await sendOTP(email, password);
             if (result.success) {
                 setOtpSent(true);
             }
         } else {
-            // Step 2: Verify OTP & Login
-            const result = await verifyOTP(email, otp);
+            const result = await verifyOTP(email, otp.join(""));
             if (result.success) {
                 const from = location.state?.from?.pathname || "/";
                 navigate(from, { replace: true });
@@ -58,10 +85,7 @@ export default function LoginPage() {
 
     return (
         <div className="auth-page">
-            {/* Animated Mesh Gradient */}
             <div className="auth-mesh-gradient" />
-
-            {/* Interactive Particle Constellation */}
             <ParticleBackground />
 
             <motion.div
@@ -70,7 +94,6 @@ export default function LoginPage() {
                 animate="show"
                 className="auth-card"
             >
-                {/* Logo */}
                 <motion.div variants={itemVariants} className="flex justify-center mb-8">
                     <Link to="/" className="flex items-center gap-3 group">
                         <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-primary/25">
@@ -82,7 +105,6 @@ export default function LoginPage() {
                     </Link>
                 </motion.div>
 
-                {/* Card */}
                 <motion.div variants={itemVariants} className="auth-form-wrapper">
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-accent" />
 
@@ -93,11 +115,7 @@ export default function LoginPage() {
                                     key={i}
                                     initial={{ opacity: 0, x: -10, filter: "blur(8px)" }}
                                     animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-                                    transition={{
-                                        duration: 0.6,
-                                        delay: 0.4 + (i * 0.1),
-                                        ease: "easeOut"
-                                    }}
+                                    transition={{ duration: 0.6, delay: 0.4 + (i * 0.1), ease: "easeOut" }}
                                 >
                                     {word}
                                 </motion.span>
@@ -108,10 +126,10 @@ export default function LoginPage() {
 
                     <form onSubmit={handleSubmit}>
                         <div className="auth-input-group">
-                            <label className="text-sm font-medium text-white/80 pl-1">Email Address</label>
+                            <label className={`text-sm font-medium pl-1 ${otpSent ? 'text-white/40' : 'text-white/80'}`}>Email Address</label>
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                    <Mail className="h-5 w-5 text-muted-foreground" />
+                                    <Mail className={`h-5 w-5 ${otpSent ? 'text-white/20' : 'text-muted-foreground'}`} />
                                 </div>
                                 <input
                                     type="email"
@@ -119,17 +137,17 @@ export default function LoginPage() {
                                     disabled={otpSent}
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className={`auth-input ${otpSent ? 'opacity-50' : ''}`}
+                                    className={`auth-input ${otpSent ? 'auth-input-disabled' : ''}`}
                                     placeholder="you@example.com"
                                 />
                             </div>
                         </div>
 
                         <div className="auth-input-group">
-                            <label className="text-sm font-medium text-white/80 pl-1">Password</label>
+                            <label className={`text-sm font-medium pl-1 ${otpSent ? 'text-white/40' : 'text-white/80'}`}>Password</label>
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                    <Lock className="h-5 w-5 text-muted-foreground" />
+                                    <Lock className={`h-5 w-5 ${otpSent ? 'text-white/20' : 'text-muted-foreground'}`} />
                                 </div>
                                 <input
                                     type={showPassword ? "text" : "password"}
@@ -137,7 +155,7 @@ export default function LoginPage() {
                                     disabled={otpSent}
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className={`auth-input pr-12 ${otpSent ? 'opacity-50' : ''}`}
+                                    className={`auth-input pr-12 ${otpSent ? 'auth-input-disabled' : ''}`}
                                     placeholder="••••••••"
                                 />
                                 {!otpSent && (
@@ -154,30 +172,33 @@ export default function LoginPage() {
 
                         {otpSent && (
                             <motion.div 
-                                initial={{ opacity: 0, y: -10 }}
+                                initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                className="auth-input-group mt-4"
+                                className="auth-input-group mt-6"
                             >
-                                <label className="text-sm font-medium text-primary pl-1 flex items-center gap-2">
-                                    <ShieldCheck className="w-4 h-4" /> Enter Verification Code
+                                <label className="text-sm font-medium text-primary pl-1 mb-3 flex items-center justify-between">
+                                    <span className="flex items-center gap-2">
+                                        <ShieldCheck className="w-4 h-4" /> Verification Code
+                                    </span>
+                                    <button type="button" onClick={() => setOtpSent(false)} className="text-[10px] text-muted-foreground hover:text-white underline">Edit info</button>
                                 </label>
-                                <div className="relative">
-                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                        <Mail className="h-5 w-5 text-primary" />
-                                    </div>
-                                    <input
-                                        type="text"
-                                        required
-                                        autoFocus
-                                        value={otp}
-                                        onChange={(e) => setOtp(e.target.value)}
-                                        className="auth-input border-primary/50 focus:border-primary shadow-[0_0_15px_rgba(45,63,227,0.1)]"
-                                        placeholder="6-digit code from Gmail"
-                                        maxLength={6}
-                                    />
+                                
+                                <div className="flex justify-between gap-2 otp-box-container" onPaste={handlePaste}>
+                                    {otp.map((data, index) => (
+                                        <input
+                                            key={index}
+                                            type="text"
+                                            maxLength="1"
+                                            className="otp-input-box"
+                                            value={data}
+                                            autoFocus={index === 0}
+                                            onChange={(e) => handleOtpChange(e.target, index)}
+                                            onKeyDown={(e) => handleKeyDown(e, index)}
+                                        />
+                                    ))}
                                 </div>
-                                <p className="text-[10px] text-muted-foreground mt-2 text-center">
-                                    Wrong email or password? <button type="button" onClick={() => setOtpSent(false)} className="text-primary hover:underline">Go back</button>
+                                <p className="text-[10px] text-primary/80 mt-3 text-center animate-pulse">
+                                    Code sent to your Gmail
                                 </p>
                             </motion.div>
                         )}
@@ -185,7 +206,7 @@ export default function LoginPage() {
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="auth-button flex items-center justify-center gap-2 mt-6"
+                            className={`auth-button flex items-center justify-center gap-2 mt-8 ${otpSent ? 'bg-primary shadow-[0_0_20px_rgba(45,63,227,0.4)]' : ''}`}
                         >
                             {isSubmitting ? (
                                 <Loader2 className="w-5 h-5 animate-spin" />

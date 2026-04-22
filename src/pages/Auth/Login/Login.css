@@ -95,3 +95,42 @@
     box-shadow: 0 8px 20px -6px rgba(139, 92, 246, 0.5);
     filter: brightness(1.1);
 }
+
+.auth-input-disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background-color: rgba(255, 255, 255, 0.02);
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+/* ===== Boxed OTP Styles ===== */
+.otp-box-container {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.otp-input-box {
+    width: 3.5rem;
+    height: 4rem;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.otp-input-box:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: rgba(45, 63, 227, 0.05);
+    box-shadow: 0 0 20px rgba(45, 63, 227, 0.2);
+    transform: scale(1.05);
+}
+
+.otp-input-box::selection {
+    background: transparent;
+}
