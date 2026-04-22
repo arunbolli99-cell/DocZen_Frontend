@@ -159,8 +159,39 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const sendOTP = async (email) => {
+        try {
+            const response = await api.post("auth/send-otp/", { email });
+            toast.success(response.data.message || "OTP sent successfully!");
+            return { success: true };
+        } catch (error) {
+            console.error("Send OTP Error:", error);
+            const msg = error.response?.data?.message || "Failed to send OTP.";
+            toast.error(msg);
+            return { success: false, message: msg };
+        }
+    };
+
+    const verifyOTP = async (email, code) => {
+        try {
+            const response = await api.post("auth/verify-otp/", { email, code });
+            const { access, refresh, user: userData } = response.data;
+            
+            const fullUser = { ...userData, access, refresh };
+            setUser(fullUser);
+            localStorage.setItem("doczen_user", JSON.stringify(fullUser));
+            toast.success("Welcome to DocZen!");
+            return { success: true };
+        } catch (error) {
+            console.error("Verify OTP Error:", error);
+            const msg = error.response?.data?.message || "Invalid OTP.";
+            toast.error(msg);
+            return { success: false, message: msg };
+        }
+    };
+
     return (
-        <AuthContext.Provider value={{ user, isLoading, login, register, logout, updateProfile, refreshUser }}>
+        <AuthContext.Provider value={{ user, isLoading, login, register, logout, updateProfile, refreshUser, sendOTP, verifyOTP }}>
             {isLoading ? <LoadingScreen /> : children}
         </AuthContext.Provider>
     );

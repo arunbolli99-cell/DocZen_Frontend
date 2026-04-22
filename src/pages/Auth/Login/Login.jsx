@@ -26,15 +26,39 @@ export default function LoginPage() {
     const location = useLocation();
     const [email, setEmail] = useState(location.state?.email || "");
     const [password, setPassword] = useState("");
+    const [otp, setOtp] = useState("");
+    const [loginMode, setLoginMode] = useState("password"); // 'password' or 'otp'
+    const [otpSent, setOtpSent] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const { login } = useAuth();
+    const [isSendingOtp, setIsSendingOtp] = useState(false);
+    
+    const { login, sendOTP, verifyOTP } = useAuth();
     const navigate = useNavigate();
+
+    const handleSendOTP = async () => {
+        if (!email) {
+            return;
+        }
+        setIsSendingOtp(true);
+        const result = await sendOTP(email);
+        setIsSendingOtp(false);
+        if (result.success) {
+            setOtpSent(true);
+        }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
-        const result = await login(email, password);
+        
+        let result;
+        if (loginMode === "password") {
+            result = await login(email, password);
+        } else {
+            result = await verifyOTP(email, otp);
+        }
+        
         setIsSubmitting(false);
         if (result.success) {
             const from = location.state?.from?.pathname || "/";
@@ -92,6 +116,22 @@ export default function LoginPage() {
                         <p className="text-muted-foreground text-sm">Sign in to continue to your AI tools suite</p>
                     </div>
 
+                    {/* Login Mode Toggle */}
+                    <div className="flex bg-white/5 p-1 rounded-lg mb-6">
+                        <button 
+                            onClick={() => setLoginMode("password")}
+                            className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${loginMode === 'password' ? 'bg-primary text-white shadow-lg' : 'text-white/60 hover:text-white'}`}
+                        >
+                            Password
+                        </button>
+                        <button 
+                            onClick={() => setLoginMode("otp")}
+                            className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${loginMode === 'otp' ? 'bg-primary text-white shadow-lg' : 'text-white/60 hover:text-white'}`}
+                        >
+                            Email OTP
+                        </button>
+                    </div>
+
                     <form onSubmit={handleSubmit}>
                         <div className="auth-input-group">
                             <label className="text-sm font-medium text-white/80 pl-1">Email Address</label>
@@ -110,40 +150,75 @@ export default function LoginPage() {
                             </div>
                         </div>
 
-                        <div className="auth-input-group">
-                            <label className="text-sm font-medium text-white/80 pl-1">Password</label>
-                            <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                    <Lock className="h-5 w-5 text-muted-foreground" />
+                        {loginMode === "password" ? (
+                            <div className="auth-input-group">
+                                <label className="text-sm font-medium text-white/80 pl-1">Password</label>
+                                <div className="relative">
+                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                        <Lock className="h-5 w-5 text-muted-foreground" />
+                                    </div>
+                                    <input
+                                        type={showPassword ? "text" : "password"}
+                                        required
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        className="auth-input pr-12"
+                                        placeholder="••••••••"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute inset-y-0 right-0 pr-4 flex items-center text-muted-foreground hover:text-primary transition-colors h-full"
+                                    >
+                                        {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                                    </button>
                                 </div>
-                                <input
-                                    type={showPassword ? "text" : "password"}
-                                    required
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    className="auth-input pr-12"
-                                    placeholder="••••••••"
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute inset-y-0 right-0 pr-4 flex items-center text-muted-foreground hover:text-primary transition-colors h-full"
-                                >
-                                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                                </button>
                             </div>
-                        </div>
+                        ) : (
+                            <div className="auth-input-group">
+                                <label className="text-sm font-medium text-white/80 pl-1">Verification Code</label>
+                                <div className="flex gap-2">
+                                    <div className="relative flex-1">
+                                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                            <ShieldCheck className="h-5 w-5 text-muted-foreground" />
+                                        </div>
+                                        <input
+                                            type="text"
+                                            required={otpSent}
+                                            value={otp}
+                                            onChange={(e) => setOtp(e.target.value)}
+                                            className="auth-input"
+                                            placeholder="6-digit code"
+                                            maxLength={6}
+                                        />
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={handleSendOTP}
+                                        disabled={isSendingOtp || !email}
+                                        className="px-4 bg-white/10 hover:bg-white/20 text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                                    >
+                                        {isSendingOtp ? <Loader2 className="w-4 h-4 animate-spin" /> : otpSent ? "Resend" : "Send Code"}
+                                    </button>
+                                </div>
+                                {otpSent && (
+                                    <p className="text-xs text-primary mt-2 pl-1 animate-pulse">
+                                        Code sent to your Gmail inbox!
+                                    </p>
+                                )}
+                            </div>
+                        )}
 
                         <button
                             type="submit"
-                            disabled={isSubmitting}
-                            className="auth-button flex items-center justify-center gap-2"
+                            disabled={isSubmitting || (loginMode === 'otp' && !otpSent)}
+                            className="auth-button flex items-center justify-center gap-2 mt-2"
                         >
                             {isSubmitting ? (
                                 <Loader2 className="w-5 h-5 animate-spin" />
                             ) : (
                                 <>
-                                    Sign In <ArrowRight className="w-5 h-5" />
+                                    {loginMode === 'password' ? 'Sign In' : 'Verify & Login'} <ArrowRight className="w-5 h-5" />
                                 </>
                             )}
                         </button>
