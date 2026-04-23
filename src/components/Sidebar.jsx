@@ -21,7 +21,6 @@ import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { cn, getAvatarSrc } from "../lib/utils";
 import { useAuth } from "../context/AuthContext";
-import fullLogo from "../assets/full-logo.jpg";
 
 const TOOLS = [
     { name: "Dashboard", href: "/", icon: LayoutDashboard },
@@ -44,12 +43,11 @@ export default function Sidebar({ isOpen, onClose }) {
     return (
         <aside className={cn("sidebar", isOpen ? "sidebar-open" : "")}>
             <div className="sidebar-logo-container">
-                <Link to="/" className="flex items-center">
-                    <img 
-                        src={fullLogo} 
-                        alt="DocZen" 
-                        className="h-14 w-auto max-w-[170px] object-contain transition-transform hover:scale-105"
-                    />
+                <Link to="/" className="flex items-center group no-underline">
+                    <div className="text-4xl font-extrabold">
+                        <span className="text-white">Doc</span>
+                        <span className="text-primary">Zen</span>
+                    </div>
                 </Link>
                 <button 
                     onClick={onClose}
