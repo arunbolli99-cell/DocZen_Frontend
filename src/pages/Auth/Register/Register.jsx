@@ -123,7 +123,7 @@ export default function RegisterPage() {
         lastName: "",
         phone: "",
         email: "",
-        gender: "male",
+        gender: "",
         password: "",
         confirmPassword: ""
     });
@@ -257,11 +257,13 @@ export default function RegisterPage() {
                             <label className="text-sm font-medium text-white/80 pl-1">Gender</label>
                             <select
                                 name="gender"
+                                required
                                 value={formData.gender}
                                 onChange={handleChange}
                                 className="auth-input appearance-none cursor-pointer"
                                 style={{ paddingLeft: '1rem' }}
                             >
+                                <option value="" disabled className="bg-slate-900">Select Gender</option>
                                 <option value="male" className="bg-slate-900">Male</option>
                                 <option value="female" className="bg-slate-900">Female</option>
                                 <option value="other" className="bg-slate-900">Other</option>
@@ -334,6 +336,9 @@ export default function RegisterPage() {
                                     {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                                 </button>
                             </div>
+                            {formData.password && formData.confirmPassword && formData.password !== formData.confirmPassword && (
+                                <p className="text-xs text-red-500 mt-1 pl-1 font-medium">Passwords do not match</p>
+                            )}
                         </div>
 
                         <button
